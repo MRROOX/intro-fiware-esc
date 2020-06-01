@@ -1,0 +1,30 @@
+{
+  "description": "Notificar a Queantumleap cuando cambia cualquier DHT22",
+  "subject": {
+    "entities": [
+      {
+        "idPattern": "DHT.*",
+        "type": "DHT"
+      }
+    ],
+    "condition": {
+      "attrs": [
+        "temperatura",
+        "humedad"
+      ]
+    }
+  },
+  "notification": {
+    "attrs": [
+      "id",
+      "temperatura",
+      "humedad",
+      "dateObserved"
+    ],
+    "http": {
+      "url": "http://quantumleap:8668/v2/notify"
+    },
+      "metadata": ["dateCreated", "dateModified"]
+  },
+  "throttling": 1
+}

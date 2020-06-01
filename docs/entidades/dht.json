@@ -1,0 +1,16 @@
+{
+    "id":"DHT007",
+    "type":"DHT",
+    "dateObserved":{
+        "type":"DateTime",
+        "value":"2020-06-02T17:00:00-05:00"
+    },
+    "temperatura":{
+        "type":"Number",
+        "value":"0"
+    },
+    "humedad":{
+        "type":"Number",
+        "value":"0"
+    }
+}
