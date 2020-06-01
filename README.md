@@ -2,30 +2,36 @@
 
 # Tutorial
 
-## Diagrama de Arquitectura
-![](docs/images/)
+## Arquitectura
+
+![](docs/img/arquitectura.png)
 
 ## Diagrama de Secuencia
 
-![](docs/images/)
+![](docs/img/secuencia.png)
 
 ## Listado de Componentes
 
 | Servicio      | Puertos            |
-| ------------- | -------------------|
-| IOT-AGENT     |   7896, 4041       |
+| --------------|--------------------|
+| SIMPLE-DASH   |  2400              |
 | ORION         |  1026              |
-| QUANTUMLEAF   | 8668               |  
-| GRAFANA       |  3000              |  
-| MONGODB       | 27017              |  
+| QUANTUMLEAP   |  8668              |
+| GRAFANA       |  3000              |
+| MONGODB       |  27017             |  
 | CRATEDB       |  5432, 4300, 4200  |
 
 ## Recursos 
 
-| URL           | Descripción                          |
-| ------------- | -------------------------------------|
-| /             |   Dashboard generado en grafana      |
-| /ORION         |  1026                                |
+### http://localhost
+
+| URL           | Descripción                                                          |
+|---------------|----------------------------------------------------------------------|
+| /             |   Dashboard generado en grafana                                      |
+| /orion        |   Servicio de Orion Brocker, para la gestión de contextos            |
+| /grafana      |   Grafana para creación de gráficos para visualizar datos            |
+| /quantumleap  |   Servicio para percistencia de datos en cratedb                     |
+| /cratedb      |   Base de datos para series de tiempo                                |
 
 
 # LOCALHOST
@@ -36,7 +42,7 @@ docker-compose up -d
 ```
 ## 2. Registro de entidad en Orion Context Brocker.
 ```
-POST http://localhost:1026/v2/entities
+POST http://localhost/orion/v2/entities
 Header: Content-Type: "application/json"
         fiware-service: openiot
         fiware-servicepath: /
@@ -51,12 +57,12 @@ En el body, utilizadmos el contenido de dht22.json
 ### Quantumleap cuenta con una api y su documentacion se encuentra en el siguiente link : http://localhost:8668/v2/ui/
 
 ```
-POST http://localhost:1026/v2/subscriptions/
+POST http://localhost/orion/v2/subscriptions/
 Header: Content-Type: "application/json"
         fiware-service: openiot
         fiware-servicepath: /
 
-En body, utilizamos el contenido de dht22-subcription.json
+En body, utilizamos el contenido de dht22-sub.json
 
 ```
 
@@ -66,10 +72,8 @@ En body, utilizamos el contenido de dht22-subcription.json
 
 ```
     localhost:4200
-    -> (Observar el nombre de la base de datos generada automaicamente)
+    -> (Observar el nombre de la base de datos generada automáticamente)
     mtopeniot
-
-
 
 ```
 
@@ -102,111 +106,23 @@ FROM etdht22 Time column time_index Metric column entity_id SELECT Column: tempe
 ```
 
 
-## Configuracion IOT-Agent 
+## Problemas con CrateDB
 
-### Sirve de intermediario entre Orion Context Brocker y un Dispositivo IOT, para la comunicacion entre el dispositivo IOT se puede utilizar varios tipos de protocolos que son ligeros para la comunicación y el envio de datos bidireccional. Además se puede asignar una Token a cada disposivito para su identificacion e integrar una medida de seguridad.
-
-### Configuracion de SERVICE
+#### Error 
 ```
-POST http://localhost:4041/iot/services
-Header: Content-type: application/json
-        Fiware-service: openiot
-        fiware-servicepath: /
-
-En el body se agrea el json iot-agent.service.json
+ERROR: [1] bootstrap checks failed
+[1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144] 
+```
+#### Solución en Linux
 
 ```
-
-
-### Configuracion de DEVICES
-```
-POST http://localhost:4041/iot/devices
-
-Header: Content-type: application/json
-        Fiware-service: openiot
-        Fiware-servicepath: /
-
-En el body de agrega el json iot-agent.device.json
-```
-#### Se va a registrar una nueva entidad en Orion, esta entidad será del tipo DHT22, entonces podra ser mapeada por Queantum leap y se podran persistir su datos en la base de datos CrateDB y luego ser visualizados mediante Grafana.
-
-
-## Configuracion Cliente en Raspberry
-
-A modo de cliente o dispositivo IOT se utiliza una raspbery pi 3 modelo b, en donde se encuentra integrado un sensor DHT22 de temperatura y humedad.
-```
-POST http://localhost:7896/iot/d
-
-Header: Content-Type: text/plain
-
-Params: 
-        k=4jggokgpepnvsb2uv4s40d59ov
-        i=DHT22003
-
-En el body se agrega:
-
-t|22|h|34
-
+sudo sysctl -w vm.max_map_count=262144
 ```
 
-El atributos t y h son definidos en iot-agent.devices.json y corresponden a object_id en este paso para la temperatura y humedad.
-
-Mediante el Script en Python que se encuetra en LOCALHOST -> IOT -> FIWARE-DHT22 llamado dht22-fiware+conf.py se utilizan estos parametros y se envia al servicio de IOT-AGENT los datos obtenidos desde el sensor DHT22. Ademas se encuentra un archivo de configuración iot-agent.conf.json en donde se puede configurar la IP o URL del servicio de IOT-AGENT.
-
-# Sistema ALPR y Fiware.
-Se integra un servicio de reconocimiento de patentes vehiculares, utilizando Open Alpr y Fiware. 
-
-Se envia un imagen al serviciode Alpr este procesa la imagen y se obtiene como resultado el valor de la patente y su grado de confianza, estos datos son enviado al Orion Broker. Median el servicio de Cygnus se persisten los datos en una base de datos MongoDB.
-
-## Diagrama de Arquitectura + Servicio ALPR
-
-![](https://raw.githubusercontent.com/MRROOX/gpi-fiware/master/TUTORIALES/LOCALHOST/LOCALHOST%2BALPR.png)
-
-## Diagrama de Secuencia + Servicio ALPR
-![](https://raw.githubusercontent.com/MRROOX/gpi-fiware/master/TUTORIALES/LOCALHOST/Secuencia%2BALPR.png)
-
-## Configuracion de Cygnus para Persistir en MongoDB.
-
-## 1. Registro de entidad en Orion Context Brocker.
-```
-POST http://localhost:1026/v2/entities
-Header: Content-Type: "application/json"
-        fiware-service: openalpr
-        fiware-servicepath: /alpr
-
-En el body, utilizadmos el contenido de alpr.json
- 
-```
-
-## 2. Actualización de Contexto
-```
-PATCH http://localhost:1026/v2/entities/ALPR0004/attrs
-Header: Content-Type: "application/json"
-        fiware-service: openalpr
-        fiware-servicepath: /alpr
-
-En el body, utilizadmos los atributos que se requiera actualizar.
- 
-```
-## 3. Subcripcion de servicio de Cygnus
-```
-POST http://localhost:1026/v2/subscriptions/
-Header: Content-Type: "application/json"
-        fiware-service: openalpr
-        fiware-servicepath: /alpr
-
-En el body, utilizadmos el contenido de alpr-cygnus.json
- 
-```
-## Uso de Servicio de ALPR
+Para que los cambios persistan en el sistema debemos modificar el archivo `/etc/sysctl.conf` y agregar la siguiente linea al final del archivo:
 
 ```
-POST http://localhost:8090/v1/identify/plate?country=us
-Header: Content-Type: "application/x-www-form-urlencoded"
-
-En el body, se utiliza un form-data, image = <imagen.jpg>
-
-
+vm.max_map_count=262144
 ```
 
 
