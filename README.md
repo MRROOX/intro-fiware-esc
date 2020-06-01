@@ -104,15 +104,51 @@ New Dashboard
 ->
 FROM etdht Time column time_index Metric column entity_id SELECT Column: temperature Column: relativehumidity 
 ```
-## Envío de Datos a Orion Brocker
 
-Luego de registrar nuestra entidad en el paso X.
+# Ejemplo Básico - power by FIWARE  
 
-Podemos enviar para ser almacenados.
+## Solución desplegada en AWS.
+
+URL: http://ec2-18-206-187-192.compute-1.amazonaws.com
+
+## Registrar entidad
+
+
+## Envío de Datos a Orion Broker
+
+Siguiendo el paso 2
+
+```
+POST http://ec2-18-206-187-192.compute-1.amazonaws.com/orion/v2/entities
+- Header: Content-Type: "application/json"
+        fiware-service: openiot
+        fiware-servicepath: /
+
+- Body: {
+    "id":"DHT007",
+    "type":"DHT",
+    "dateObserved":{
+        "type":"DateTime",
+        "value":"2020-06-02T17:00:00-05:00"
+    },
+    "temperatura":{
+        "type":"Number",
+        "value":"0"
+    },
+    "humedad":{
+        "type":"Number",
+        "value":"0"
+    }
+}
+
+ 
+```
+
+El atributo id, se debe cambiar por el elijan. En mi caso DHT007
 
 
 ```
-PATCH http://localhost/orion/v2/entities/{ID_DEVICE}/attrs
+PATCH http://ec2-18-206-187-192.compute-1.amazonaws.com/orion/v2/entities/{ID_DEVICE}/attrs
 
 - Header: Content-Type: "application/json"
         fiware-service: openiot
