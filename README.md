@@ -1,4 +1,4 @@
-# Ejemplo Básico - power by FIWARE
+# Ejemplo Básico - powered by FIWARE
 
 # Tutorial
 
@@ -105,7 +105,9 @@ New Dashboard
 FROM etdht Time column time_index Metric column entity_id SELECT Column: temperature Column: relativehumidity 
 ```
 
-# Ejemplo Básico - power by FIWARE  
+# DESAFÍO
+
+## Realizar el registro de una entidad y el envío de datos a solución FIWARE disponible en AWS, Siguiendo el tutorial disponible en el repositorio.
 
 ## Solución desplegada en AWS.
 
