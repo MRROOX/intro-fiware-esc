@@ -88,6 +88,8 @@ select * from mtopeniot.etdht limit 100;
 
 ### El nombre de la Database: mtopeniot es definido por el Header del registro en Orion Context Broker `fiware-service: openiot`.
 
+
+### Registrar una nueva Data Base
 ```
     localhost:3000
 
@@ -98,12 +100,23 @@ select * from mtopeniot.etdht limit 100;
     User: crate
     SSL Mode disable
 ```
-```
-New Dashboard
 
-->
-FROM etdht Time column time_index Metric column entity_id SELECT Column: temperature Column: relativehumidity 
+### Registrar un nuevo dashboard
+Seleccionar la base de datos que hemos creado, y armar esta consulta.
 ```
+
+
+FROM etdht Time column time_index Metric column entity_id SELECT Column: temperatura Column: humedad
+```
+
+Guardar el dashboard. 
+
+
+### Compartir Dashboard en iframe.
+Luego de guardar el dashboard, se debe regresar la menú principal y luego seleccionar el grafico que hemos creado. Justo en al lado del titulo se encuentra una viñeta que muestra un menú desplegable, ahí se selecciona la 3ra opción, se abrirá un modal en donde podemos seleccionar la pestaña de "Embed" y copiar el codigo generado para el iframe.
+
+Este  codigo lo ingresames en nuestra aplicación web.
+
 
 # DESAFÍO
 
@@ -111,7 +124,7 @@ FROM etdht Time column time_index Metric column entity_id SELECT Column: tempera
 
 ## Solución desplegada en AWS.
 
-URL: http://ec2-18-206-187-192.compute-1.amazonaws.com
+URL: http://ec2-3-90-48-33.compute-1.amazonaws.com/
 
 ## Registrar entidad
 
@@ -121,7 +134,7 @@ URL: http://ec2-18-206-187-192.compute-1.amazonaws.com
 Siguiendo el paso 2
 
 ```
-POST http://ec2-18-206-187-192.compute-1.amazonaws.com/orion/v2/entities
+POST http://ec2-3-90-48-33.compute-1.amazonaws.com/orion/v2/entities
 - Header: Content-Type: "application/json"
         fiware-service: openiot
         fiware-servicepath: /
@@ -150,7 +163,7 @@ El atributo id, se debe cambiar por el elijan. En mi caso DHT007
 
 
 ```
-PATCH http://ec2-18-206-187-192.compute-1.amazonaws.com/orion/v2/entities/{ID_DEVICE}/attrs
+PATCH http://ec2-3-90-48-33.compute-1.amazonaws.com/orion/v2/entities/{ID_DEVICE}/attrs
 
 - Header: Content-Type: "application/json"
         fiware-service: openiot
